@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AgriStore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a4731, #2d6a4f);
+            padding: 2rem;
+        }
+
+        .login-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header img {
+            width: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .login-header h1 {
+            color: #2d3436;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #636e72;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #2d6a4f;
+            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
+            outline: none;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 1rem;
+            top: 2.3rem;
+            color: #b2bec3;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #2d6a4f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .login-btn:hover {
+            background: #1a4731;
+        }
+
+        .login-btn .btn-spinner {
+            display: none;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .login-btn.loading {
+            background: #1a4731;
+            cursor: not-allowed;
+        }
+
+        .login-btn.loading .btn-spinner {
+            display: inline-block;
+        }
+
+        .alternative-login {
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .alternative-login p {
+            color: #636e72;
+            margin-bottom: 1rem;
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .social-btn {
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .social-btn:hover {
+            background: #f5f6fa;
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            display: none;
+            color: #e74c3c;
+            background: #ffeaea;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .signup-link a {
+            color: #2d6a4f;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 1rem;
+        }
+
+        .forgot-password a {
+            color: #636e72;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .forgot-password a:hover {
+            color: #2d6a4f;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <img src="pagesfolder/agri.jpg" alt="Logo">
+            <h1>Welcome Back</h1>
+            <p>Sign in to continue to AgriStore</p>
+        </div>
+
+        <div id="error-message" class="error-message"></div>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="email" required placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" required placeholder="Enter your password">
+            </div>
+
+            <div class="forgot-password">
+                <a href="#" id="forgot-password">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="login-btn">
+                <span class="btn-text">Sign In</span>
+                <i class="fas fa-circle-notch btn-spinner"></i>
+            </button>
+        </form>
+
+        <div class="alternative-login">
+            <p>Or sign in with</p>
+            <div class="social-buttons">
+                <button type="button" class="social-btn" id="google-signin">
+                    <img src="https://img.icons8.com/color/24/000000/google-logo.png" alt="Google">
+                </button>
+                <button type="button" class="social-btn" id="facebook-signin">
+                    <img src="https://img.icons8.com/color/24/000000/facebook-new.png" alt="Facebook">
+                </button>
+            </div>
+        </div>
+
+        <div class="signup-link">
+            <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, googleProvider, facebookProvider } from './firebase-config.js';
+        import { 
+            signInWithEmailAndPassword, 
+            signInWithPopup,
+            sendPasswordResetEmail 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const loginForm = document.getElementById('login-form');
+        const errorMessage = document.getElementById('error-message');
+        const googleSignInBtn = document.getElementById('google-signin');
+        const facebookSignInBtn = document.getElementById('facebook-signin');
+        const loginBtn = document.querySelector('.login-btn');
+        const forgotPasswordLink = document.getElementById('forgot-password');
+
+        function setLoading(isLoading) {
+            const btnText = loginBtn.querySelector('.btn-text');
+            const btnSpinner = loginBtn.querySelector('.btn-spinner');
+            const socialButtons = document.querySelectorAll('.social-btn');
+
+            if (isLoading) {
+                loginBtn.classList.add('loading');
+                loginBtn.disabled = true;
+                btnText.textContent = 'Signing in...';
+                btnSpinner.style.display = 'inline-block';
+                socialButtons.forEach(btn => btn.disabled = true);
+            } else {
+                loginBtn.classList.remove('loading');
+                loginBtn.disabled = false;
+                btnText.textContent = 'Sign In';
+                btnSpinner.style.display = 'none';
+                socialButtons.forEach(btn => btn.disabled = false);
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Email/Password Sign In
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            setLoading(true);
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                console.log('Signed in successfully:', userCredential.user);
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Sign in error:', error);
+                let errorMsg = 'Failed to sign in. Please try again.';
+                
+                switch (error.code) {
+                    case 'auth/wrong-password':
+                        errorMsg = 'Incorrect password. Please try again.';
+                        break;
+                    case 'auth/user-not-found':
+                        errorMsg = 'No account found with this email.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMsg = 'Invalid email address.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMsg = 'Too many failed attempts. Please try again later.';
+                        break;
+                }
+                
+                showError(errorMsg);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Social Sign In Handler
+        async function handleSocialSignIn(provider, providerName) {
+            try {
+                setLoading(true);
+                const result = await signInWithPopup(auth, provider);
+                console.log(`${providerName} sign in successful:`, result.user);
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error(`${providerName} sign in error:`, error);
+                let errorMsg = `Failed to sign in with ${providerName}.`;
+                
+                switch (error.code) {
+                    case 'auth/popup-blocked':
+                        errorMsg = 'Sign in popup was blocked. Please allow popups and try again.';
+                        break;
+                    case 'auth/popup-closed-by-user':
+                        errorMsg = 'Sign in was cancelled. Please try again.';
+                        break;
+                    case 'auth/account-exists-with-different-credential':
+                        errorMsg = 'An account already exists with the same email address but different sign-in credentials.';
+                        break;
+                    case 'auth/cancelled-popup-request':
+                        return; // Silent handling for cancelled requests
+                    case 'auth/network-request-failed':
+                        errorMsg = 'Network error. Please check your internet connection.';
+                        break;
+                }
+                
+                showError(errorMsg);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // Google Sign In
+        googleSignInBtn.addEventListener('click', () => {
+            handleSocialSignIn(googleProvider, 'Google');
+        });
+
+        // Facebook Sign In
+        facebookSignInBtn.addEventListener('click', () => {
+            handleSocialSignIn(facebookProvider, 'Facebook');
+        });
+
+        // Forgot Password
+        forgotPasswordLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            
+            if (!email) {
+                showError('Please enter your email address first.');
+                return;
+            }
+
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showError('Password reset email sent! Please check your inbox.');
+            } catch (error) {
+                console.error('Error sending reset email:', error);
+                showError('Failed to send reset email. Please try again.');
+            }
+        });
+
+        // Clear error message when user starts typing
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => {
+                errorMessage.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>

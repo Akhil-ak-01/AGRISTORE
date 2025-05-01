@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Login - AgriStore Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, #1a4731, #2d6a4f, #388e3c);
+            background-size: 200% 200%;
+            animation: gradientBG 10s ease infinite;
+            padding: 2rem;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: slideUpFade 0.6s ease forwards;
+        }
+
+        @keyframes slideUpFade {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-header .logo {
+            width: 90px;
+            height: 90px;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .login-title {
+            color: #2d3436;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #1a4731, #2d6a4f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-subtitle {
+            color: #636e72;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.8rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            color: #2d3436;
+            margin-bottom: 0.6rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .form-group .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus {
+            border-color: #2d6a4f;
+            box-shadow: 0 0 0 4px rgba(45, 106, 79, 0.1);
+            outline: none;
+        }
+
+        .form-group .icon {
+            position: absolute;
+            left: 1rem;
+            color: #b2bec3;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .form-group input:focus + .icon {
+            color: #2d6a4f;
+            transform: scale(1.1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            color: #b2bec3;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 50%;
+        }
+
+        .password-toggle:hover {
+            color: #2d6a4f;
+            background: rgba(45, 106, 79, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(45deg, #1a4731, #2d6a4f);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        .login-btn:hover::before {
+            left: 100%;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(45, 106, 79, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            display: none;
+            color: #e74c3c;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            text-align: center;
+            padding: 0.8rem;
+            border-radius: 8px;
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.2);
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: #636e72;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-top: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-link i {
+            margin-right: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #2d6a4f;
+        }
+
+        .back-link:hover i {
+            transform: translateX(-3px);
+        }
+
+        .btn-spinner {
+            display: none;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 2rem;
+            }
+
+            .login-title {
+                font-size: 1.75rem;
+            }
+
+            .form-group input {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2d6a4f;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1a4731;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <img src="pagesfolder/agri.jpg" alt="AgriStore Logo" class="logo">
+            <h1 class="login-title">Owner Login</h1>
+            <p class="login-subtitle">Access your admin dashboard</p>
+        </div>
+        
+        <form id="owner-login-form">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <div class="input-wrapper">
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="Enter your email" 
+                        value="owner@agristore.com"
+                        required
+                        autocomplete="email"
+                    >
+                    <i class="fas fa-envelope icon"></i>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <div class="input-wrapper">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Enter your password"
+                        value="admin123" 
+                        required
+                        autocomplete="current-password"
+                    >
+                    <i class="fas fa-lock icon"></i>
+                    <i class="fas fa-eye password-toggle" id="password-toggle"></i>
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn">
+                <span class="btn-text">Login to Dashboard</span>
+                <i class="fas fa-circle-notch btn-spinner"></i>
+            </button>
+
+            <div id="error-message" class="error-message"></div>
+        </form>
+
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+    </div>
+
+    <script type="module">
+        import { auth } from './firebase-config.js';
+        import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // Owner credentials
+        const OWNER_EMAIL = 'owner@agristore.com';
+        const OWNER_PASSWORD = 'admin123';
+        
+        const loginForm = document.getElementById('owner-login-form');
+        const errorMessage = document.getElementById('error-message');
+        const passwordToggle = document.getElementById('password-toggle');
+        const passwordInput = document.getElementById('password');
+        const loginBtn = document.querySelector('.login-btn');
+        const btnText = document.querySelector('.btn-text');
+        const btnSpinner = document.querySelector('.btn-spinner');
+
+        // Password visibility toggle
+        passwordToggle.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            passwordToggle.classList.toggle('fa-eye');
+            passwordToggle.classList.toggle('fa-eye-slash');
+            passwordInput.focus();
+        });
+
+        // Handle form submission
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Validate owner email
+            if (email !== OWNER_EMAIL) {
+                showError('Access denied. Only the owner can login.');
+                return;
+            }
+
+            setLoading(true);
+            hideError();
+
+            try {
+                let userCredential;
+                
+                // First, try to create the account
+                try {
+                    userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    console.log('Account created successfully');
+                } catch (createError) {
+                    // If account already exists, try to sign in
+                    if (createError.code === 'auth/email-already-in-use') {
+                        try {
+                            userCredential = await signInWithEmailAndPassword(auth, email, password);
+                        } catch (signInError) {
+                            handleLoginError(signInError);
+                            setLoading(false);
+                            return;
+                        }
+                    } else {
+                        handleLoginError(createError);
+                        setLoading(false);
+                        return;
+                    }
+                }
+
+                // If we get here, either creation or sign in was successful
+                handleSuccessfulLogin(userCredential);
+            } catch (error) {
+                console.error('Login error:', error);
+                handleLoginError(error);
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        function handleSuccessfulLogin(userCredential) {
+            console.log('Login successful:', userCredential.user);
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => {
+                window.location.href = 'owner-dashboard.html';
+            }, 500);
+        }
+
+        // Helper functions
+        function setLoading(isLoading) {
+            loginBtn.disabled = isLoading;
+            btnText.style.display = isLoading ? 'none' : 'block';
+            btnSpinner.style.display = isLoading ? 'block' : 'none';
+            loginBtn.style.cursor = isLoading ? 'wait' : 'pointer';
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            errorMessage.style.animation = 'none';
+            errorMessage.offsetHeight;
+            errorMessage.style.animation = 'shake 0.5s ease';
+        }
+
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+
+        function handleLoginError(error) {
+            let message = 'Login failed. Please check your credentials.';
+            
+            switch (error.code) {
+                case 'auth/invalid-email':
+                    message = 'Please enter a valid email address.';
+                    break;
+                case 'auth/user-disabled':
+                    message = 'This account has been disabled.';
+                    break;
+                case 'auth/user-not-found':
+                    message = 'No account found with this email.';
+                    break;
+                case 'auth/wrong-password':
+                    message = 'Incorrect password. Please try again.';
+                    break;
+                case 'auth/too-many-requests':
+                    message = 'Too many failed attempts. Please try again later.';
+                    break;
+                case 'auth/weak-password':
+                    message = 'Password should be at least 6 characters.';
+                    break;
+                case 'auth/email-already-in-use':
+                    message = 'An account with this email already exists.';
+                    break;
+            }
+            
+            showError(message);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && document.activeElement === passwordInput) {
+                e.preventDefault();
+                loginBtn.click();
+            }
+        });
+
+        // Prevent form resubmission
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
+        }
+    </script>
+</body>
+</html>

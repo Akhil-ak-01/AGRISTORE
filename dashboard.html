@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - AgriStore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #2d6a4f;
+            --secondary-color: #1a4731;
+            --bg-color: #f8f9fa;
+            --text-color: #2d3436;
+            --sidebar-width: 250px;
+        }
+
+        body {
+            background: var(--bg-color);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            padding: 2rem 1rem;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-header img {
+            width: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link i {
+            margin-right: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .user-welcome {
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 1rem;
+            min-width: 200px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .profile-menu-item {
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .profile-menu-item:hover {
+            background: #f5f6fa;
+            border-radius: 4px;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-title {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Recent Orders Table */
+        .recent-orders {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th, .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .table th {
+            color: var(--text-color);
+            font-weight: 600;
+        }
+
+        .status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+        }
+
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="pagesfolder/agri.jpg" alt="AgriStore Logo">
+                <h2>AgriStore</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        Orders
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-heart"></i>
+                        Wishlist
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="topbar">
+                <h1 class="user-welcome">Welcome, <span id="user-name">User</span>!</h1>
+                <div class="user-profile">
+                    <span id="user-email"></span>
+                    <i class="fas fa-user-circle fa-2x"></i>
+                    <div class="profile-dropdown">
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-user"></i>
+                            Profile
+                        </a>
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-cog"></i>
+                            Settings
+                        </a>
+                        <a href="#" class="profile-menu-item" id="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Cards -->
+            <div class="dashboard-cards">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                    </div>
+                    <div class="card-title">Total Orders</div>
+                    <div class="card-value">12</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                    </div>
+                    <div class="card-title">Wishlist Items</div>
+                    <div class="card-value">5</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                    </div>
+                    <div class="card-title">Pending Deliveries</div>
+                    <div class="card-value">3</div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="recent-orders">
+                <div class="table-header">
+                    <h2>Recent Orders</h2>
+                    <a href="#" class="view-all">View All</a>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Product</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body">
+                        <!-- Orders will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { auth } from './firebase-config.js';
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // DOM Elements
+        const userNameElement = document.getElementById('user-name');
+        const userEmailElement = document.getElementById('user-email');
+        const logoutBtn = document.getElementById('logout-btn');
+        const userProfile = document.querySelector('.user-profile');
+        const profileDropdown = document.querySelector('.profile-dropdown');
+        const ordersTableBody = document.getElementById('orders-table-body');
+
+        // Sample orders data (replace with actual data from Firebase)
+        const sampleOrders = [
+            { id: 'ORD001', product: 'Organic Tomatoes', date: '2025-04-28', amount: '$25.99', status: 'completed' },
+            { id: 'ORD002', product: 'Fresh Carrots', date: '2025-04-27', amount: '$18.50', status: 'pending' },
+            { id: 'ORD003', product: 'Green Peppers', date: '2025-04-26', amount: '$15.75', status: 'completed' }
+        ];
+
+        // Toggle profile dropdown
+        userProfile.addEventListener('click', () => {
+            profileDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfile.contains(e.target)) {
+                profileDropdown.classList.remove('show');
+            }
+        });
+
+        // Logout functionality
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'signin.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+            }
+        });
+
+        // Authentication state observer
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                userNameElement.textContent = user.displayName || 'User';
+                userEmailElement.textContent = user.email;
+                loadDashboardData();
+            } else {
+                // User is signed out
+                window.location.href = 'signin.html';
+            }
+        });
+
+        // Load dashboard data
+        function loadDashboardData() {
+            // Clear existing orders
+            ordersTableBody.innerHTML = '';
+
+            // Add sample orders (replace with actual data fetching)
+            sampleOrders.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${order.product}</td>
+                    <td>${order.date}</td>
+                    <td>${order.amount}</td>
+                    <td><span class="status ${order.status}">${order.status}</span></td>
+                `;
+                ordersTableBody.appendChild(row);
+            });
+        }
+
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add mobile menu toggle functionality
+            const menuToggle = document.createElement('button');
+            menuToggle.className = 'menu-toggle';
+            menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
+            document.querySelector('.topbar').prepend(menuToggle);
+
+            menuToggle.addEventListener('click', () => {
+                document.querySelector('.sidebar').classList.toggle('show');
+            });
+        });
+    </script>
+</body>
+</html>

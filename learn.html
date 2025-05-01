@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriMart - Pesticides & Equipment</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9fafb;
+            color: #2d3436;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(3, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            margin: 0;
+            padding: 1rem;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 0.7rem;
+            background: rgba(3, 0, 0, 0.98);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #4CAF50;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            color: #45a049;
+            transform: scale(1.05);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #fdf9f9;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #4CAF50;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .mobile-menu {
+            display: none;
+            cursor: pointer;
+        }
+
+        .mobile-menu div {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                        url('pagesfolder/front.jpg') no-repeat center center/cover;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+            margin-top: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.1);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.6; }
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 8px #000;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            max-width: 700px;
+            margin-bottom: 2.5rem;
+            animation: fadeInUp 1s ease 0.3s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .cta-button {
+            background: #4CAF50;
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            animation: fadeInUp 1s ease 0.6s;
+            opacity: 0;
+            animation-fill-mode: forwards;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: #45a049;
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+
+        .cta-button:hover::before {
+            width: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 7rem 20px;
+            background: white;
+            position: relative;
+        }
+
+        .features::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(to bottom, #f9fafb 0%, white 100%);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            background: #f8f9fa;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: #4CAF50;
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            color: #4CAF50;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+
+        /* Products Section */
+        .section {
+            padding: 5rem 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .section h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 3rem;
+            font-size: 2.5em;
+            position: relative;
+        }
+
+        .section h2::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background: #4CAF50;
+            margin: 10px auto;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .product {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .product:hover {
+            transform: translateY(-10px);
+        }
+
+        .product img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+
+        .product-content {
+            padding: 1.5rem;
+        }
+
+        .product-content h3 {
+            margin: 0 0 1rem;
+            font-size: 1.3em;
+            color: #4CAF50;
+        }
+
+        .product-content p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .product-price {
+            font-weight: 600;
+            color: #4CAF50;
+            font-size: 1.2em;
+        }
+
+        /* Contact Section */
+        .contact {
+            background: #f8f9fa;
+            padding: 5rem 20px;
+        }
+
+        .contact-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contact-item i {
+            color: #4CAF50;
+            font-size: 1.5em;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            padding: 0 20px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #4CAF50;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5em;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: #4CAF50;
+        }
+
+        /* Media Queries */
+        @media (max-width: 1024px) {
+            .hero h1 {
+                font-size: 2.8em;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                height: 100vh;
+                width: 70%;
+                background: rgba(3, 0, 0, 0.95);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transition: right 0.5s ease;
+                padding: 2rem;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .mobile-menu {
+                display: block;
+                z-index: 1001;
+            }
+
+            .mobile-menu.active div:nth-child(1) {
+                transform: rotate(-45deg) translate(-5px, 6px);
+            }
+
+            .mobile-menu.active div:nth-child(2) {
+                opacity: 0;
+            }
+
+            .mobile-menu.active div:nth-child(3) {
+                transform: rotate(45deg) translate(-5px, -6px);
+            }
+
+            .hero h1 {
+                font-size: 2.2em;
+            }
+
+            .hero p {
+                font-size: 1.1em;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .products {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-content {
+                padding: 0 15px;
+            }
+
+            .logo {
+                font-size: 1.5em;
+            }
+
+            .hero h1 {
+                font-size: 1.8em;
+            }
+
+            .cta-button {
+                padding: 1rem 2rem;
+            }
+
+            .section h2 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <a href="#" class="logo">Agristore</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="#products">Products</a>
+                <a href="#equipment">Equipment</a>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="mobile-menu">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="hero" id="home">
+        <h1>Empowering Farmers with Quality Products</h1>
+        <p>Your trusted partner in agricultural success. We provide premium pesticides, equipment, and expert guidance for optimal crop yield.</p>
+        <a href="#products" class="cta-button">Explore Products</a>
+    </div>
+
+    <div class="features">
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-leaf feature-icon"></i>
+                <h3>Organic Solutions</h3>
+                <p>Eco-friendly products that protect both crops and environment</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-tractor feature-icon"></i>
+                <h3>Modern Equipment</h3>
+                <p>State-of-the-art farming equipment for enhanced productivity</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-users feature-icon"></i>
+                <h3>Expert Support</h3>
+                <p>Dedicated team of agricultural experts to guide you</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" id="products">
+        <h2>Our Best-Selling Products</h2>
+        <div class="products">
+            <div class="product">
+                <img src="pagesfolder/pd-2.jpg" alt="Organic Pesticide" style="width: 100%; height: 250px; object-fit: cover;">
+                <div class="product-content">
+                    <h3>Organic Pest Control</h3>
+                    <p>Premium organic pesticide that ensures crop safety while maintaining effectiveness against pests.</p>
+                    <span class="product-price">₹599/unit</span>
+                </div>
+            </div>
+            <div class="product">
+                <img src="pagesfolder/pd-3.jpg" alt="Advanced Shield" style="width: 100%; height: 250px; object-fit: cover;">
+                <div class="product-content">
+                    <h3>Advanced Crop Shield</h3>
+                    <p>High-performance formula designed for maximum crop protection and enhanced yield.</p>
+                    <span class="product-price">₹799/unit</span>
+                </div>
+            </div>
+            <div class="product">
+                <img src="pagesfolder/pd-7.jpg" alt="Bio Fertilizer" style="width: 100%; height: 250px; object-fit: cover;">
+                <div class="product-content">
+                    <h3>Bio Fertilizer Plus</h3>
+                    <p>Natural bio-fertilizer enriched with essential nutrients for healthy crop growth.</p>
+                    <span class="product-price">₹449/unit</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section" id="equipment">
+        <h2>Agricultural Equipment</h2>
+        <div class="products">
+            <div class="product">
+                <img src="pagesfolder/product1.jpg" alt="Premium Seeds" style="width: 100%; height: 250px; object-fit: cover;">
+                <div class="product-content">
+                    <h3>Premium Seeds Collection</h3>
+                    <p>High-quality seeds with excellent germination rate and disease resistance.</p>
+                    <span class="product-price">₹299/packet</span>
+                </div>
+            </div>
+            <div class="product">
+                <img src="pagesfolder/pd-6.jpg" alt="Professional Equipment" style="width: 100%; height: 250px; object-fit: cover;">
+                <div class="product-content">
+                    <h3>Professional Sprayer</h3>
+                    <p>Advanced spraying equipment with adjustable nozzles and large capacity tank.</p>
+                    <span class="product-price">₹1,999</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="contact" id="contact">
+        <div class="section">
+            <h2>Contact Us</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <p>1-0 Bhadrachalam, 500032</p>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <p>+91 9876543210</p>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <p>agri@gmail.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <p>Agristore is committed to providing quality agricultural products and solutions to farmers across India.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <p><a href="#products">Products</a></p>
+                <p><a href="#equipment">Equipment</a></p>
+                <p><a href="#contact">Contact</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <p style="margin-top: 2rem;">© 2025 Agristore | Growing Together</p>
+    </footer>
+
+    <script>
+        // Mobile menu functionality
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const navLinks = document.querySelector('.nav-links');
+        const nav = document.querySelector('nav');
+
+        if (mobileMenu) {
+            mobileMenu.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

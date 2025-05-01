@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agri - agriparts and pestisides</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="firebase-config.js"></script>
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        .font-playfair {
+            font-family: 'Playfair Display', serif;
+        }
+        .header-bg {
+            background: linear-gradient(135deg, #166534 0%, #15803d 100%);
+        }
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+        .slide-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUp 0.6s ease forwards;
+        }
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.6s ease forwards;
+        }
+        @keyframes slideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        .btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: -100%;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1), transparent);
+            transition: 0.3s;
+        }
+        .btn:hover::after {
+            left: 100%;
+        }
+        .card {
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .slider-container {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 1rem;
+        }
+        .max-h-90vh {
+            max-height: 90vh;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+<!-- Header -->
+<header class="bg-[#2874f0] text-white sticky top-0 z-50">
+    <div class="container mx-auto px-4">
+        <!-- Top Navigation -->
+        <div class="flex items-center justify-between py-2">
+            <!-- Logo Section -->
+            <div class="flex items-center space-x-3">
+                <img alt="Agri Logo" class="h-8 w-8" src="logo.png">
+                <div class="flex flex-col">
+                    <h1 class="text-xl font-bold italic">Agri store</h1>
+                    <span class="text-xs font-medium text-gray-200 italic">Farming Solutions</span>
+                </div>
+            </div>
+
+            <!-- Search Bar - Hidden on Mobile -->
+            <div class="hidden md:flex flex-1 max-w-2xl mx-12">
+                <div class="w-full flex">
+                    <input type="text" id="search-input" 
+                           class="w-full px-4 py-2 text-sm text-gray-700 bg-white rounded-l-sm focus:outline-none" 
+                           placeholder="Search for pesticides, farming tools and more...">
+                    <button id="search-btn" 
+                            class="px-8 py-2 bg-white text-[#2874f0] hover:bg-gray-100 rounded-r-sm">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Menu -->
+            <div class="flex items-center space-x-4">
+                <a href="login.html" class="hidden md:flex items-center space-x-1 hover:text-gray-200">
+                    <i class="fas fa-user text-sm"></i>
+                    <span class="text-sm font-medium">Login</span>
+                </a>
+                <a href="user-dashboard.html" class="hidden md:flex items-center space-x-1 hover:text-gray-200">
+                    <i class="fas fa-shopping-cart text-sm"></i>
+                    <span class="text-sm font-medium">Cart</span>
+                </a>
+                <button id="nav-toggle" class="md:hidden text-white focus:outline-none">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Search - Visible only on Mobile -->
+        <div class="md:hidden pb-2">
+            <div class="flex">
+                <input type="text" id="search-input-mobile" 
+                       class="w-full px-4 py-2 text-sm text-gray-700 bg-white rounded-l-sm focus:outline-none" 
+                       placeholder="Search products...">
+                <button id="search-btn-mobile" 
+                        class="px-6 py-2 bg-white text-[#2874f0] hover:bg-gray-100 rounded-r-sm">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Category Navigation - Desktop Only -->
+<nav class="hidden md:block bg-white shadow-md">
+    <div class="container mx-auto">
+        <ul class="flex justify-between items-center py-2 px-4 text-sm">
+            <li class="category-item">
+                <a href="#products" class="flex flex-col items-center text-gray-700 hover:text-[#2874f0]">
+                    <i class="fas fa-bug text-xl mb-1"></i>
+                    <span>Pesticides</span>
+                </a>
+            </li>
+            <li class="category-item">
+                <a href="#products" class="flex flex-col items-center text-gray-700 hover:text-[#2874f0]">
+                    <i class="fas fa-seedling text-xl mb-1"></i>
+                    <span>Fertilizers</span>
+                </a>
+            </li>
+            <li class="category-item">
+                <a href="#tools" class="flex flex-col items-center text-gray-700 hover:text-[#2874f0]">
+                    <i class="fas fa-tools text-xl mb-1"></i>
+                    <span>Tools</span>
+                </a>
+            </li>
+            <li class="category-item">
+                <a href="#seeds" class="flex flex-col items-center text-gray-700 hover:text-[#2874f0]">
+                    <i class="fas fa-leaf text-xl mb-1"></i>
+                    <span>Seeds</span>
+                </a>
+            </li>
+            <li class="category-item">
+                <a href="#machinery" class="flex flex-col items-center text-gray-700 hover:text-[#2874f0]">
+                    <i class="fas fa-tractor text-xl mb-1"></i>
+                    <span>Machinery</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Mobile Menu Sidebar -->
+<div id="mobile-menu" class="fixed top-0 right-0 h-full w-64 bg-white transform translate-x-full transition-transform duration-300 ease-in-out shadow-lg z-50">
+    <div class="p-4">
+        <!-- Close Button -->
+        <button id="close-menu" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times text-xl"></i>
+        </button>
+
+        <!-- Mobile Menu Header -->
+        <div class="flex items-center space-x-3 mb-8 mt-4">
+            <div class="w-10 h-10 bg-[#2874f0] rounded-full flex items-center justify-center">
+                <i class="fas fa-user text-white"></i>
+            </div>
+            <div>
+                <p class="text-sm text-gray-600">Welcome</p>
+                <a href="login.html" class="text-[#2874f0] text-sm font-medium">Login / Sign Up</a>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Links -->
+        <div class="flex flex-col space-y-4">
+            <a href="index.html" class="flex items-center space-x-3 text-gray-700 hover:text-[#2874f0] py-2">
+                <i class="fas fa-home w-6"></i>
+                <span>Home</span>
+            </a>
+            <a href="#our products" class="flex items-center space-x-3 text-gray-700 hover:text-[#2874f0] py-2">
+                <i class="fas fa-th-large w-6"></i>
+                <span>All Categories</span>
+            </a>
+            <a href="user-dashboard.html" class="flex items-center space-x-3 text-gray-700 hover:text-[#2874f0] py-2">
+                <i class="fas fa-shopping-cart w-6"></i>
+                <span>Cart</span>
+            </a>
+            <a href="user-dashboard.html" class="flex items-center space-x-3 text-gray-700 hover:text-[#2874f0] py-2">
+                <i class="fas fa-box w-6"></i>
+                <span>My Orders</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Overlay for mobile menu -->
+<div id="menu-overlay" class="fixed inset-0 bg-black opacity-50 hidden z-40"></div>
+
+<script>
+    // Mobile menu functionality
+    const navToggle = document.getElementById('nav-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const closeMenu = document.getElementById('close-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
+
+    function toggleMenu() {
+        mobileMenu.classList.toggle('translate-x-full');
+        menuOverlay.classList.toggle('hidden');
+        document.body.classList.toggle('overflow-hidden');
+    }
+
+    navToggle.addEventListener('click', toggleMenu);
+    closeMenu.addEventListener('click', toggleMenu);
+    menuOverlay.addEventListener('click', toggleMenu);
+
+    // Handle mobile search
+    document.getElementById('search-btn-mobile').addEventListener('click', () => {
+        const searchTerm = document.getElementById('search-input-mobile').value.toLowerCase();
+        performSearch(searchTerm);
+    });
+</script>
+
+<!-- Main Content -->
+<main class="container mx-auto px-4 py-6">
+    <!-- Automatic Photo Slider -->
+    <section class="photo-slider mt-6">
+        <div class="slider-container relative overflow-hidden w-full max-w-7xl mx-auto">
+            <div class="slides flex transition-transform duration-700 ease-in-out">
+                <div class="slide flex-shrink-0 w-full h-[300px]">
+                    <img src="pagesfolder/pd-6.jpg" alt="Pesticide 1" class="w-full h-full object-cover rounded-lg">
+                </div>
+                <div class="slide flex-shrink-0 w-full h-[300px]">
+                    <img src="pagesfolder/pd-2.jpg" alt="Pesticide 2" class="w-full h-full object-cover rounded-lg">
+                </div>
+                <div class="slide flex-shrink-0 w-full h-[300px]">
+                    <img src="pagesfolder/product1.jpg" alt="Pesticide 3" class="w-full h-full object-cover rounded-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+        <div class="card p-6 bg-green-50/80 rounded-xl shadow-md glass-effect slide-up animation-delay-300">
+            <h2 class="text-3xl font-playfair font-semibold text-gray-800 mb-4">Premium Pesticides</h2>
+            <p class="text-gray-600 mb-6">
+                Discover our premium range of pesticides designed to protect your crops from harmful pests and diseases. 
+                Our products ensure higher yields, healthier plants, and sustainable farming practices.
+            </p>
+            <a href="#products" class="bg-green-600 text-white px-5 py-2 rounded-lg btn text-sm font-medium inline-block">View Now</a>
+        </div>
+        <div class="card p-6 bg-orange-50/80 rounded-xl shadow-md glass-effect relative slide-up animation-delay-400">
+            <h2 class="text-3xl font-playfair font-semibold text-gray-800 mb-4">Special Offers</h2>
+            <p class="text-gray-600 mb-6">Get amazing discounts on our premium pesticide products. Limited time offer!</p>
+            <a href="#products" class="bg-green-600 text-white px-5 py-2 rounded-lg btn text-sm font-medium inline-block">View Now</a>
+            <span class="absolute top-4 right-4 bg-yellow-200 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full">Save 30%</span>
+        </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div id="products" class="mt-12">
+        <h2 class="text-3xl font-playfair font-semibold text-gray-800 mb-6 text-center slide-up animation-delay-700">Our Products</h2>
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"></div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-white py-10">
+    <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="fade-in animation-delay-1100">
+            <h3 class="text-2xl font-playfair font-semibold mb-4">About Us</h3>
+            <p class="text-gray-400">Your trusted partner in agricultural solutions. We provide high-quality pesticides to protect your crops and enhance your farming experience.</p>
+        </div>
+        <div class="fade-in animation-delay-1200">
+            <h3 class="text-2xl font-playfair font-semibold mb-4">Quick Links</h3>
+            <ul class="space-y-2">
+                <li><a class="text-gray-400 hover:text-green-400" href="#">Home</a></li>
+                <li><a class="text-gray-400 hover:text-green-400" href="#">About</a></li>
+                <li><a class="text-gray-400 hover:text-green-400" href="#">Products</a></li>
+                <li><a class="text-gray-400 hover:text-green-400" href="#">Contact</a></li>
+            </ul>
+        </div>
+        <div class="fade-in animation-delay-1300">
+            <h3 class="text-2xl font-playfair font-semibold mb-4">Contact</h3>
+            <p class="text-gray-400 mb-2"><i class="fas fa-envelope mr-2"><p>agri@gmail.com</p>
+            <p class="text-gray-400 mb-2"><i class="fas fa-phone mr-2"></i>+91 </p>7569921448
+            <p class="text-gray-400"><i class="fas fa-map-marker-alt mr-2"></i>1-0 Bhadrachalam, India</p>
+        </div>
+        <div class="fade-in animation-delay-1400">
+            <h3 class="text-2xl font-playfair font-semibold mb-4">Follow Us</h3>
+            <div class="flex space-x-4">
+                <a href="@akhilspeaks" class="text-gray-400 hover:text-green-400"><i class="fab fa-youtube"></i></a>
+                <a href="github.com" class="text-gray-400 hover:text-green-400"><i class="fab fa-github"></i></a>
+                <a href="#" class="text-gray-400 hover:text-green-400"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script type="module">
+    import { auth, db } from './firebase-config.js';
+    import { collection, getDocs, query, orderBy, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+    const OWNER_WHATSAPP = "7569921448"; // Owner's WhatsApp number
+
+    // Automatic Slider
+    const slides = document.querySelector('.slides');
+    const slide = document.querySelectorAll('.slide');
+    let currentIndex = 0;
+
+    function autoSlide() {
+        currentIndex = (currentIndex + 1) % slide.length;
+        const slideWidth = slide[0].clientWidth;
+        slides.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+    }
+
+    setInterval(autoSlide, 3000);
+
+    // Make functions globally available
+    window.showProductDetails = function(product) {
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-90vh overflow-y-auto relative">
+                <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-700" onclick="this.closest('.fixed').remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="md:w-1/2">
+                        <img src="${product.imageUrl || 'pagesfolder/product1.jpg'}" alt="${product.name}" 
+                             class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <div class="md:w-1/2">
+                        <h2 class="text-2xl font-semibold mb-2">${product.name}</h2>
+                        <p class="text-gray-600 mb-2">Company: ${product.company}</p>
+                        <p class="text-green-600 font-bold text-xl mb-2">₹${product.price}</p>
+                        <p class="text-yellow-500 mb-4">Rating: ${product.rating} ★</p>
+                        <p class="text-gray-700 mb-4">${product.description || 'No description available'}</p>
+                        <button onclick="window.showOrderForm(${JSON.stringify(product).replace(/"/g, '&quot;')})" 
+                                class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors">
+                            Shop Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    };
+
+    // Show order form
+    window.showOrderForm = function(product) {
+        // Remove existing modal if any
+        document.querySelector('.fixed')?.remove();
+        
+        // Check authentication first
+        if (!auth.currentUser) {
+            window.location.href = 'signin.html';
+            return;
+        }
+        
+        const modal = document.createElement('div');
+        modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+        modal.innerHTML = `
+            <div class="bg-white rounded-lg p-6 max-w-xl w-full mx-4 max-h-90vh overflow-y-auto">
+                <div class="flex justify-between items-start mb-4">
+                    <h2 class="text-2xl font-semibold">Order Details</h2>
+                    <button class="text-gray-500 hover:text-gray-700" onclick="this.closest('.fixed').remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <form id="orderForm" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                            <input type="text" name="fullName" required 
+                                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+                            <input type="email" name="email" required 
+                                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
+                            <input type="tel" name="phone" required pattern="[0-9]{10}"
+                                   placeholder="10 digit number"
+                                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Village/City *</label>
+                            <input type="text" name="village" required 
+                                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">State *</label>
+                            <input type="text" name="state" required 
+                                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Country *</label>
+                            <input type="text" name="country" required value="India"
+                                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">PIN Code *</label>
+                            <input type="text" name="pinCode" required pattern="[0-9]{6}"
+                                   placeholder="6 digit PIN code"
+                                   class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Additional Notes</label>
+                            <textarea name="notes" rows="3" 
+                                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" 
+                            class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors">
+                        Continue to WhatsApp
+                    </button>
+                </form>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        // Handle form submission
+        document.getElementById('orderForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                // Double check authentication
+                if (!auth.currentUser) {
+                    throw new Error('Please sign in to place an order');
+                }
+
+                const form = e.target;
+                const formData = new FormData(form);
+                
+                // Create order data
+                const orderData = {
+                    userId: auth.currentUser.uid,
+                    orderId: 'ORD' + Date.now().toString().slice(-6),
+                    customerName: formData.get('fullName'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    address: `${formData.get('village')}, ${formData.get('state')} - ${formData.get('pinCode')}`,
+                    product: product.name,
+                    price: product.price,
+                    orderDate: new Date(),
+                    status: 'pending',
+                    notes: formData.get('notes') || '',
+                    imageUrl: product.imageUrl || '',
+                    company: product.company || ''
+                };
+
+                // Save to Firestore
+                const docRef = await addDoc(collection(db, "orders"), orderData);
+                
+                if (!docRef.id) {
+                    throw new Error('Failed to save order');
+                }
+
+                // Show success message
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+                toast.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Order saved successfully!</span>
+                    </div>
+                `;
+                document.body.appendChild(toast);
+                
+                // Prepare WhatsApp message
+                const message = `
+*New Order Request*
+------------------
+Order ID: ${orderData.orderId}
+
+*Product Details:*
+Product: ${orderData.product}
+Price: ${orderData.price}
+Company: ${orderData.company}
+
+*Customer Details:*
+Name: ${orderData.customerName}
+Phone: ${orderData.phone}
+Email: ${orderData.email}
+Delivery Address: ${orderData.address}
+${orderData.notes ? '\nAdditional Notes:\n' + orderData.notes : ''}`.trim();
+
+                // Open WhatsApp in new window
+                window.open(`https://wa.me/7569921448?text=${encodeURIComponent(message)}`, '_blank');
+
+                // Remove toast and redirect to dashboard after 3 seconds
+                setTimeout(() => {
+                    toast.remove();
+                    window.location.href = 'user-dashboard.html';
+                }, 3000);
+
+            } catch (error) {
+                console.error('Error saving order:', error);
+                let errorMessage = 'Error saving your order. Please try again.';
+                
+                // More specific error messages
+                if (error.code === 'permission-denied') {
+                    errorMessage = 'You do not have permission to place orders.';
+                } else if (error.code === 'unavailable') {
+                    errorMessage = 'Service is currently unavailable. Please try again later.';
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                alert(errorMessage);
+                
+                // If not signed in, redirect to signin
+                if (error.message === 'Please sign in to place an order') {
+                    window.location.href = 'signin.html';
+                }
+            }
+        });
+    };
+
+    // Fetch and display products
+    async function displayProducts() {
+        const productGrid = document.getElementById("product-grid");
+        
+        try {
+            const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
+            const querySnapshot = await getDocs(q);
+            
+            querySnapshot.forEach((doc) => {
+                const product = doc.data();
+                const productCard = document.createElement("div");
+                productCard.classList.add("card", "p-5", "text-center", "bg-white/90", "rounded-xl", "shadow-md", "slide-up", "animation-delay-800", "cursor-pointer");
+                
+                productCard.innerHTML = `
+                    <img alt="${product.name}" class="w-full h-52 object-cover rounded-lg" src="${product.imageUrl || 'pagesfolder/product1.jpg'}">
+                    <h3 class="text-xl font-semibold mt-3">${product.name}</h3>
+                    <p class="text-gray-600 mt-1">${product.company}</p>
+                    <p class="text-green-600 font-bold mt-1">₹${product.price}</p>
+                    <p class="text-yellow-500 mt-1">Rating: ${product.rating} ★</p>
+                    <button onclick="window.showProductDetails(${JSON.stringify(product).replace(/"/g, '&quot;')})" 
+                            class="bg-green-600 text-white px-4 py-2 rounded-lg btn mt-3 text-sm font-medium inline-block">
+                        View Details
+                    </button>
+                `;
+                
+                productGrid.appendChild(productCard);
+            });
+        } catch (error) {
+            console.error("Error fetching products: ", error);
+            productGrid.innerHTML = '<p class="text-center text-red-500">Error loading products. Please refresh the page.</p>';
+        }
+    }
+
+    // Load products when the page loads
+    displayProducts();
+
+    // Search functionality
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.getElementById('search-btn');
+
+    searchBtn.addEventListener('click', () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        const products = document.querySelectorAll('#product-grid .card');
+        
+        products.forEach(product => {
+            const title = product.querySelector('h3').textContent.toLowerCase();
+            const company = product.querySelector('p').textContent.toLowerCase();
+            
+            if (title.includes(searchTerm) || company.includes(searchTerm)) {
+                product.style.display = 'block';
+            } else {
+                product.style.display = 'none';
+            }
+        });
+    });
+   
+</script>
+</body>
+</html>

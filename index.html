@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriStore - Quality Pesticides</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+   <!-- Navigation -->
+   <nav class="navbar-index">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <a href="#" class="logo-link">
+                    <img src="pagesfolder/logo.png" alt="AgriStore Logo" class="logo">
+                    <span class="brand-text">AgriStore</span>
+                </a>
+            </div>
+            
+            <div class="nav-search">
+                <form class="search-form" action="search.html" method="get">
+                    <div class="search-wrapper">
+                        <input type="text" name="query" placeholder="Search products..." aria-label="Search">
+                        <button type="submit" class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span class="hamburger"></span>
+            </button>
+
+            <div class="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="#" class="nav-link active">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a></li>
+                    <li><a href="learn.html" class="nav-link">
+                        <i class="fas fa-book"></i>
+                        <span>About</span>
+                    </a></li>
+                    <li><a href="temp.html" class="nav-link">
+                        <i class="fas fa-store"></i>
+                        <span>Products</span>
+                    </a></li>
+                    <li><a href="contact.html" class="nav-link">
+                        <i class="fas fa-envelope"></i>
+                        <span>Contact</span>
+                    </a></li>
+                </ul>
+
+                <div class="auth-buttons">
+                    <a href="login.html" class="auth-btn login">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Login</span>
+                    </a>
+                    <a href="signup.html" class="auth-btn signup">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Sign Up</span>
+                    </a>
+                    <a href="owner-login.html" class="auth-btn admin">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Admin</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1 class="fade-in">Quality Pesticides for Better Farming</h1>
+            <h2 class="fade-in">Protect Your Crops with Premium Solutions</h2>
+            <p class="fade-in">High-quality pest control solutions for farmers and agricultural professionals.</p>
+            <div class="hero-buttons fade-in">
+                <button onclick="location.href='temp.html'" class="btn shop-now"><i class="fas fa-shopping-cart"></i> Shop Now</button>
+                <button onclick="location.href='learn.html'" class="btn learn-more"><i class="fas fa-info-circle"></i> Learn More</button>
+            </div>
+        </div>
+        <div class="hero-image fade-in">
+            <img src="pagesfolder/agri.jpg" alt="Indian Farming" class="farming-image">
+        </div>
+    </div>
+</section>
+
+<script>
+    // Mobile menu toggle functionality
+    const navToggle = document.querySelector('.nav-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+
+    navToggle.addEventListener('click', () => {
+        navToggle.classList.toggle('active');
+        navMenu.classList.toggle('active');
+        document.body.classList.toggle('no-scroll');
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!navMenu.contains(e.target) && !navToggle.contains(e.target)) {
+            navToggle.classList.remove('active');
+            navMenu.classList.remove('active');
+            document.body.classList.remove('no-scroll');
+        }
+    });
+
+    // Navbar scroll effect
+    const navbar = document.querySelector('.navbar-index');
+    let lastScroll = 0;
+
+    window.addEventListener('scroll', () => {
+        const currentScroll = window.pageYOffset;
+        
+        // Add/remove scrolled class based on scroll position
+        if (currentScroll > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+
+        lastScroll = currentScroll;
+    });
+
+    // Active link highlighting
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('section');
+
+    function setActiveLink() {
+        let current = '';
+        
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (window.pageYOffset >= sectionTop - 100) {
+                current = section.getAttribute('id');
+            }
+        });
+
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href').includes(current)) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    window.addEventListener('scroll', setActiveLink);
+    window.addEventListener('load', setActiveLink);
+</script>
+</body>
+</html>

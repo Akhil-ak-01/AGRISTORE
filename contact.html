@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - AgriStore</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .nav-brand img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .nav-brand h2 {
+            color: #2d3436;
+            font-size: 1.5rem;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #2d6a4f, #1a4731);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto 2rem;
+            padding: 0 2rem;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+            animation: fadeIn 1s ease;
+        }
+
+        .contact-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #2d6a4f;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(45, 106, 79, 0.1);
+        }
+
+        .contact-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .contact-icon {
+            width: 80px;
+            height: 80px;
+            background: #f0f9f4;
+            color: #2d6a4f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover .contact-icon {
+            background: #2d6a4f;
+            color: white;
+            transform: rotateY(360deg);
+        }
+
+        .contact-type {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 1rem;
+        }
+
+        .contact-info {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 2rem;
+            background: #2d6a4f;
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .contact-link:hover {
+            background: #1a4731;
+            transform: translateY(-2px);
+        }
+
+        .back-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #2d6a4f;
+            text-decoration: none;
+            font-weight: 500;
+            margin: 2rem auto;
+            width: fit-content;
+        }
+
+        .back-link:hover {
+            color: #1a4731;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .contact-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .contact-card {
+                padding: 1.5rem;
+            }
+
+            .contact-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .contact-type {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-header">
+        <div class="nav-content">
+            <a href="index.html" class="nav-brand">
+                <img src="pagesfolder/logo.png" alt="AgriStore Logo">
+                <h2>AgriStore</h2>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1 class="hero-title">Feel Free to Contact Me</h1>
+        <p class="hero-subtitle">Have questions or need assistance? We're here to help! Choose your preferred way to reach out to us.</p>
+    </section>
+
+    <div class="contact-container">
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <h3 class="contact-type">Phone Support</h3>
+                <p class="contact-info">Available 24/7 for your queries</p>
+                <p class="contact-info">+91 7569921448</p>
+                <a href="tel:+917569921448" class="contact-link">
+                    <i class="fas fa-phone-alt"></i>
+                    Call Now
+                </a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h3 class="contact-type">Email Support</h3>
+                <p class="contact-info">Get in touch via email</p>
+                <p class="contact-info">owner@agristore.com</p>
+                <a href="mailto:owner@agristore.com" class="contact-link">
+                    <i class="fas fa-paper-plane"></i>
+                    Send Email
+                </a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <h3 class="contact-type">WhatsApp</h3>
+                <p class="contact-info">Chat with us instantly</p>
+                <p class="contact-info">+91 7569921448</p>
+                <a href="https://wa.me/7569921448" target="_blank" class="contact-link">
+                    <i class="fab fa-whatsapp"></i>
+                    WhatsApp Us
+                </a>
+            </div>
+        </div>
+
+        <a href="index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Home
+        </a>
+    </div>
+</body>
+</html>

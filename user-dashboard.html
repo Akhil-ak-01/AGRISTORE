@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - AgriStore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2d6a4f;
+            --secondary-color: #1a4731;
+            --bg-color: #f8f9fa;
+            --text-color: #2d3436;
+            --sidebar-width: 250px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--bg-color);
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            padding: 2rem;
+            position: fixed;
+            height: 100vh;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            color: var(--text-color);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .user-welcome {
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .user-profile {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-width: 200px;
+            display: none;
+            z-index: 100;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .profile-menu-item {
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .profile-menu-item:hover {
+            background: #f5f6fa;
+            border-radius: 4px;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-title {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Recent Orders */
+        .recent-orders {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th, .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        .product-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .product-info img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .product-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-name {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .product-company {
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        .status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            display: inline-block;
+        }
+
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                z-index: 100;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="pagesfolder/agri.jpg" alt="AgriStore Logo">
+                <h2>AgriStore</h2>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="temp.html" class="nav-link">
+                        <i class="fas fa-shopping-cart"></i>
+                        Shop
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-heart"></i>
+                        Wishlist
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="topbar">
+                <h1 class="user-welcome">Welcome, <span id="user-name">User</span>!</h1>
+                <div class="user-profile">
+                    <span id="user-email"></span>
+                    <i class="fas fa-user-circle fa-2x"></i>
+                    <div class="profile-dropdown">
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-user"></i>
+                            Profile
+                        </a>
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-cog"></i>
+                            Settings
+                        </a>
+                        <a href="#" class="profile-menu-item" id="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Cards -->
+            <div class="dashboard-cards">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                    </div>
+                    <div class="card-title">Total Orders</div>
+                    <div class="card-value" id="total-orders">0</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="card-title">Pending Orders</div>
+                    <div class="card-value" id="pending-orders">0</div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="card-title">Completed Orders</div>
+                    <div class="card-value" id="completed-orders">0</div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="recent-orders">
+                <div class="table-header">
+                    <h2>Recent Orders</h2>
+                    <a href="#" class="view-all">View All</a>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-table-body">
+                        <!-- Orders will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script type="module">
+        import { auth, db } from './firebase-config.js';
+        import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { collection, query, where, getDocs, orderBy, onSnapshot, doc, deleteDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        
+        // DOM Elements
+        const userNameElement = document.getElementById('user-name');
+        const userEmailElement = document.getElementById('user-email');
+        const logoutBtn = document.getElementById('logout-btn');
+        const userProfile = document.querySelector('.user-profile');
+        const profileDropdown = document.querySelector('.profile-dropdown');
+        const ordersTableBody = document.getElementById('orders-table-body');
+        const totalOrdersElement = document.getElementById('total-orders');
+        const pendingOrdersElement = document.getElementById('pending-orders');
+        const completedOrdersElement = document.getElementById('completed-orders');
+
+        // Toggle profile dropdown
+        userProfile.addEventListener('click', () => {
+            profileDropdown.classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userProfile.contains(e.target)) {
+                profileDropdown.classList.remove('show');
+            }
+        });
+
+        // Logout functionality
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                window.location.href = 'signin.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+            }
+        });
+
+        // Real-time order status update function
+        function updateOrderStatus(orderId) {
+            const whatsappUrl = `https://wa.me/7569921448?text=${encodeURIComponent(`Checking status for Order: ${orderId}`)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Cancel order function with error handling
+        async function cancelOrder(docId) {
+            if (!docId || !auth.currentUser) {
+                console.error('No document ID or user not authenticated');
+                alert('Please sign in to cancel orders.');
+                return;
+            }
+
+            try {
+                if (!confirm('Are you sure you want to cancel this order?')) {
+                    return;
+                }
+
+                const orderRef = doc(db, "orders", docId);
+                
+                // First, get the order to verify ownership
+                const orderSnap = await getDoc(orderRef);
+                if (!orderSnap.exists()) {
+                    throw new Error('Order not found');
+                }
+
+                const orderData = orderSnap.data();
+                if (orderData.userId !== auth.currentUser.uid) {
+                    throw new Error('You do not have permission to cancel this order');
+                }
+
+                // If we get here, the user owns the order and can cancel it
+                await updateDoc(orderRef, {
+                    status: 'cancelled',
+                    cancelledAt: new Date(),
+                    cancelledBy: auth.currentUser.uid
+                });
+
+                // Show success message
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+                toast.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Order cancelled successfully!</span>
+                    </div>
+                `;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+
+            } catch (error) {
+                console.error("Error cancelling order:", error);
+                let errorMessage = 'Error cancelling order. Please try again.';
+                
+                if (error.message === 'You do not have permission to cancel this order') {
+                    errorMessage = error.message;
+                } else if (error.code === 'not-found') {
+                    errorMessage = 'Order not found. It may have been already cancelled.';
+                }
+                
+                alert(errorMessage);
+            }
+        }
+
+        // Format date
+        function formatDate(timestamp) {
+            if (!timestamp) return 'N/A';
+            if (timestamp instanceof Date) return timestamp.toLocaleString('en-IN');
+            // Handle Firestore Timestamp
+            if (timestamp.toDate) return timestamp.toDate().toLocaleString('en-IN');
+            return 'N/A';
+        }
+
+        // Initialize real-time order updates
+        function initializeRealTimeOrders(userId) {
+            try {
+                const ordersQuery = query(
+                    collection(db, "orders"),
+                    where("userId", "==", userId)
+                );
+
+                return onSnapshot(ordersQuery, (snapshot) => {
+                    let totalOrders = 0;
+                    let pendingOrders = 0;
+                    let completedOrders = 0;
+                    ordersTableBody.innerHTML = '';
+
+                    if (snapshot.empty) {
+                        ordersTableBody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-gray-500">No orders found</td></tr>';
+                        totalOrdersElement.textContent = '0';
+                        pendingOrdersElement.textContent = '0';
+                        completedOrdersElement.textContent = '0';
+                        return;
+                    }
+
+                    // Convert snapshot to array and sort manually
+                    const orders = [];
+                    snapshot.forEach((doc) => {
+                        const order = {
+                            ...doc.data(),
+                            docId: doc.id // Store the document ID
+                        };
+                        if (order) {
+                            orders.push(order);
+                        }
+                    });
+
+                    // Sort orders by date manually
+                    orders.sort((a, b) => {
+                        const dateA = a.orderDate?.toDate?.() || new Date(a.orderDate);
+                        const dateB = b.orderDate?.toDate?.() || new Date(b.orderDate);
+                        return dateB - dateA;
+                    });
+
+                    // Display sorted orders
+                    orders.forEach((order) => {
+                        totalOrders++;
+                        order.status === 'pending' ? pendingOrders++ : completedOrders++;
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${order.orderId || 'N/A'}</td>
+                            <td>
+                                <div class="product-info">
+                                    <img src="${order.imageUrl || 'pagesfolder/product1.jpg'}" 
+                                         alt="${order.product}"
+                                         onerror="this.src='pagesfolder/product1.jpg'">
+                                    <div class="product-details">
+                                        <div class="product-name">${order.product || 'N/A'}</div>
+                                        <div class="product-company">${order.company || 'N/A'}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>₹${order.price || '0'}</td>
+                            <td>${formatDate(order.orderDate)}</td>
+                            <td><span class="status ${order.status || 'pending'}">${order.status || 'pending'}</span></td>
+                            <td class="space-x-2">
+                                <button onclick="updateOrderStatus('${order.orderId}')"
+                                        class="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
+                                    Check Status
+                                </button>
+                                ${order.status === 'pending' ? `
+                                    <button onclick="cancelOrder('${order.docId}')"
+                                            class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm">
+                                        Cancel
+                                    </button>
+                                ` : ''}
+                            </td>
+                        `;
+                        ordersTableBody.appendChild(row);
+                    });
+
+                    // Update dashboard cards
+                    totalOrdersElement.textContent = totalOrders;
+                    pendingOrdersElement.textContent = pendingOrders;
+                    completedOrdersElement.textContent = completedOrders;
+                }, (error) => {
+                    console.error("Error getting real-time orders:", error);
+                    ordersTableBody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-red-500">
+                                Error loading orders. ${error.message || 'Please try refreshing the page.'}
+                            </td>
+                        </tr>
+                    `;
+                    totalOrdersElement.textContent = '0';
+                    pendingOrdersElement.textContent = '0';
+                    completedOrdersElement.textContent = '0';
+                });
+            } catch (error) {
+                console.error("Error setting up orders listener:", error);
+                ordersTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-red-500">
+                            Error loading orders. Please try refreshing the page.
+                        </td>
+                    </tr>
+                `;
+                totalOrdersElement.textContent = '0';
+                pendingOrdersElement.textContent = '0';
+                completedOrdersElement.textContent = '0';
+            }
+        }
+
+        // Authentication state observer
+        let unsubscribe = null;
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                userNameElement.textContent = user.displayName || user.email.split('@')[0];
+                userEmailElement.textContent = user.email;
+                
+                // Initialize real-time updates
+                if (unsubscribe) unsubscribe();
+                unsubscribe = initializeRealTimeOrders(user.uid);
+            } else {
+                // User is signed out
+                window.location.href = 'signin.html';
+            }
+        });
+
+        // Make functions available globally
+        window.updateOrderStatus = updateOrderStatus;
+        window.cancelOrder = cancelOrder;
+    </script>
+</body>
+</html>

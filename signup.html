@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - AgriStore</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1a4731, #2d6a4f);
+            padding: 2rem;
+        }
+
+        .signup-container {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .signup-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .signup-header img {
+            width: 80px;
+            margin-bottom: 1rem;
+        }
+
+        .signup-header h1 {
+            color: #2d3436;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #636e72;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: #2d6a4f;
+            box-shadow: 0 0 0 3px rgba(45, 106, 79, 0.1);
+            outline: none;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 1rem;
+            top: 2.3rem;
+            color: #b2bec3;
+        }
+
+        .password-requirements {
+            font-size: 0.8rem;
+            color: #636e72;
+            margin-top: 0.5rem;
+            padding-left: 0.5rem;
+        }
+
+        .password-requirements.valid {
+            color: #2d6a4f;
+        }
+
+        .signup-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #2d6a4f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .signup-btn:hover {
+            background: #1a4731;
+        }
+
+        .signup-btn .btn-spinner {
+            display: none;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .signup-btn.loading {
+            background: #1a4731;
+            cursor: not-allowed;
+        }
+
+        .signup-btn.loading .btn-spinner {
+            display: inline-block;
+        }
+
+        .error-message {
+            display: none;
+            color: #e74c3c;
+            background: #ffeaea;
+            padding: 0.8rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .signin-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .signin-link a {
+            color: #2d6a4f;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .signin-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="signup-header">
+            <img src="pagesfolder/agri.jpg" alt="Logo">
+            <h1>Create Account</h1>
+            <p>Join AgriStore today</p>
+        </div>
+
+        <div id="error-message" class="error-message"></div>
+
+        <form id="signup-form">
+            <div class="form-group">
+                <label for="fullname">Full Name</label>
+                <i class="fas fa-user"></i>
+                <input type="text" id="fullname" required placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="email" required placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" required placeholder="Create a password">
+                <div class="password-requirements">
+                    Must be at least 8 characters with 1 number and 1 special character
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <i class="fas fa-lock"></i>
+                <input type="password" id="confirm-password" required placeholder="Confirm your password">
+            </div>
+
+            <button type="submit" class="signup-btn">
+                <span class="btn-text">Create Account</span>
+                <i class="fas fa-circle-notch btn-spinner"></i>
+            </button>
+        </form>
+
+        <div class="signin-link">
+            <p>Already have an account? <a href="signin.html">Sign in</a></p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth } from './firebase-config.js';
+        import { createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const signupForm = document.getElementById('signup-form');
+        const errorMessage = document.getElementById('error-message');
+        const signupBtn = document.querySelector('.signup-btn');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirm-password');
+        const passwordRequirements = document.querySelector('.password-requirements');
+
+        function setLoading(isLoading) {
+            const btnText = signupBtn.querySelector('.btn-text');
+            if (isLoading) {
+                signupBtn.classList.add('loading');
+                signupBtn.disabled = true;
+                btnText.textContent = 'Creating Account...';
+            } else {
+                signupBtn.classList.remove('loading');
+                signupBtn.disabled = false;
+                btnText.textContent = 'Create Account';
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        function validatePassword(password) {
+            const minLength = 8;
+            const hasNumber = /\d/.test(password);
+            const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+            
+            if (password.length < minLength) {
+                return 'Password must be at least 8 characters long';
+            }
+            if (!hasNumber) {
+                return 'Password must contain at least 1 number';
+            }
+            if (!hasSpecial) {
+                return 'Password must contain at least 1 special character';
+            }
+            return null;
+        }
+
+        passwordInput.addEventListener('input', () => {
+            const password = passwordInput.value;
+            const error = validatePassword(password);
+            if (error) {
+                passwordRequirements.classList.remove('valid');
+                passwordRequirements.textContent = error;
+            } else {
+                passwordRequirements.classList.add('valid');
+                passwordRequirements.textContent = '✓ Password meets requirements';
+            }
+        });
+
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            setLoading(true);
+
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+
+            // Validate password
+            const passwordError = validatePassword(password);
+            if (passwordError) {
+                showError(passwordError);
+                setLoading(false);
+                return;
+            }
+
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                // Update user profile with full name
+                await updateProfile(userCredential.user, {
+                    displayName: fullname
+                });
+                console.log('Account created successfully:', userCredential.user);
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                let errorMsg = 'Failed to create account. Please try again.';
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMsg = 'This email is already registered. Please sign in instead.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMsg = 'Invalid email address.';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMsg = 'Password is too weak. Please choose a stronger password.';
+                }
+                showError(errorMsg);
+                setLoading(false);
+            }
+        });
+    </script>
+</body>
+</html>
