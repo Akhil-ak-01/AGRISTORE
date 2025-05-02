@@ -549,14 +549,136 @@ ${orderData.notes ? '\nAdditional Notes:\n' + orderData.notes : ''}`.trim();
         });
     };
 
-    // Fetch and display products
+    // Enhanced search functionality
+    function performSearch(searchTerm) {
+        const productGrid = document.getElementById('product-grid');
+        const products = document.querySelectorAll('#product-grid .card');
+        let hasResults = false;
+
+        if (!searchTerm) {
+            // If search is empty, show all products
+            products.forEach(product => {
+                product.style.display = 'block';
+            });
+            return;
+        }
+
+        searchTerm = searchTerm.toLowerCase();
+        
+        products.forEach(product => {
+            const title = product.querySelector('h3').textContent.toLowerCase();
+            const company = product.querySelector('p').textContent.toLowerCase();
+            const price = product.querySelector('.text-green-600').textContent.toLowerCase();
+            const rating = product.querySelector('.text-yellow-500').textContent.toLowerCase();
+            
+            // Search across multiple fields
+            if (title.includes(searchTerm) || 
+                company.includes(searchTerm) || 
+                price.includes(searchTerm) ||
+                rating.includes(searchTerm)) {
+                product.style.display = 'block';
+                hasResults = true;
+            } else {
+                product.style.display = 'none';
+            }
+        });
+
+        // Show no results message if needed
+        const noResultsMsg = document.getElementById('no-results-message');
+        if (!hasResults) {
+            if (!noResultsMsg) {
+                const message = document.createElement('div');
+                message.id = 'no-results-message';
+                message.className = 'text-center text-gray-500 mt-8 w-full';
+                message.innerHTML = `
+                    <i class="fas fa-search-minus text-4xl mb-2"></i>
+                    <p class="text-lg">No products found for "${searchTerm}"</p>
+                    <button onclick="clearSearch()" class="mt-4 text-blue-500 hover:text-blue-700">
+                        <i class="fas fa-undo mr-1"></i>Show all products
+                    </button>
+                `;
+                productGrid.appendChild(message);
+            }
+        } else if (noResultsMsg) {
+            noResultsMsg.remove();
+        }
+    }
+
+    // Clear search and show all products
+    window.clearSearch = function() {
+        const searchInputs = ['search-input', 'search-input-mobile'];
+        searchInputs.forEach(id => {
+            const input = document.getElementById(id);
+            if (input) input.value = '';
+        });
+        performSearch('');
+    }
+
+    // Desktop search
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.getElementById('search-btn');
+
+    searchBtn.addEventListener('click', () => {
+        performSearch(searchInput.value);
+    });
+
+    searchInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+            performSearch(searchInput.value);
+        }
+        // Real-time search for 3 or more characters
+        if (searchInput.value.length >= 3 || searchInput.value.length === 0) {
+            performSearch(searchInput.value);
+        }
+    });
+
+    // Mobile search
+    const searchInputMobile = document.getElementById('search-input-mobile');
+    const searchBtnMobile = document.getElementById('search-btn-mobile');
+
+    searchBtnMobile.addEventListener('click', () => {
+        performSearch(searchInputMobile.value);
+    });
+
+    searchInputMobile.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+            performSearch(searchInputMobile.value);
+        }
+        // Real-time search for 3 or more characters
+        if (searchInputMobile.value.length >= 3 || searchInputMobile.value.length === 0) {
+            performSearch(searchInputMobile.value);
+        }
+    });
+
+    // Add loading state during product fetch
     async function displayProducts() {
         const productGrid = document.getElementById("product-grid");
         
         try {
+            // Show loading state
+            productGrid.innerHTML = `
+                <div class="col-span-full text-center py-8">
+                    <i class="fas fa-spinner fa-spin text-3xl text-green-600 mb-2"></i>
+                    <p class="text-gray-600">Loading products...</p>
+                </div>
+            `;
+
             const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
             const querySnapshot = await getDocs(q);
             
+            // Clear loading state
+            productGrid.innerHTML = '';
+            
+            if (querySnapshot.empty) {
+                productGrid.innerHTML = `
+                    <div class="col-span-full text-center py-8">
+                        <i class="fas fa-box-open text-4xl text-gray-400 mb-2"></i>
+                        <p class="text-gray-500">No products available</p>
+                    </div>
+                `;
+                return;
+            }
+
             querySnapshot.forEach((doc) => {
                 const product = doc.data();
                 const productCard = document.createElement("div");
@@ -569,7 +691,7 @@ ${orderData.notes ? '\nAdditional Notes:\n' + orderData.notes : ''}`.trim();
                     <p class="text-green-600 font-bold mt-1">₹${product.price}</p>
                     <p class="text-yellow-500 mt-1">Rating: ${product.rating} ★</p>
                     <button onclick="window.showProductDetails(${JSON.stringify(product).replace(/"/g, '&quot;')})" 
-                            class="bg-green-600 text-white px-4 py-2 rounded-lg btn mt-3 text-sm font-medium inline-block">
+                            class="bg-green-600 text-white px-4 py-2 rounded-lg btn mt-3 text-sm font-medium inline-block hover:bg-green-700 transition-colors">
                         View Details
                     </button>
                 `;
@@ -578,33 +700,17 @@ ${orderData.notes ? '\nAdditional Notes:\n' + orderData.notes : ''}`.trim();
             });
         } catch (error) {
             console.error("Error fetching products: ", error);
-            productGrid.innerHTML = '<p class="text-center text-red-500">Error loading products. Please refresh the page.</p>';
+            productGrid.innerHTML = `
+                <div class="col-span-full text-center py-8 text-red-500">
+                    <i class="fas fa-exclamation-circle text-4xl mb-2"></i>
+                    <p>Error loading products. Please refresh the page.</p>
+                </div>
+            `;
         }
     }
 
-    // Load products when the page loads
+    // Initial load
     displayProducts();
-
-    // Search functionality
-    const searchInput = document.getElementById('search-input');
-    const searchBtn = document.getElementById('search-btn');
-
-    searchBtn.addEventListener('click', () => {
-        const searchTerm = searchInput.value.toLowerCase();
-        const products = document.querySelectorAll('#product-grid .card');
-        
-        products.forEach(product => {
-            const title = product.querySelector('h3').textContent.toLowerCase();
-            const company = product.querySelector('p').textContent.toLowerCase();
-            
-            if (title.includes(searchTerm) || company.includes(searchTerm)) {
-                product.style.display = 'block';
-            } else {
-                product.style.display = 'none';
-            }
-        });
-    });
-   
 </script>
 </body>
 </html>
